@@ -1,14 +1,12 @@
-//import { Key } from '../src/modules/keys.js'
-import { Key } from './modules/key.js'
-
-const input = document.querySelector('#input');
-const board = document.createElement('div');
-const body = document.querySelector('body');
-board.classList.add('board');
-board.innerHTML = `<div class="row"></div><div class="row"></div><div class="row"></div><div class="row"></div>`;
-body.append(board);
-const rows = document.querySelectorAll('.row');
-const keys = {
+class Key {
+    constructor(classKey, row, keyNumber, item) {
+      this.classKey = classKey;
+      this.row = row;
+      this.keyNumber = keyNumber;
+      this.item = item;  
+    }
+  }
+  const keys = {
     //row №1
     Backquote: new Key('key', '0', 0, '~'),
     Digit1: new Key('key', '0', 1, '1' ),
@@ -69,7 +67,17 @@ const keys = {
     ArrowUp: new Key('key', 3, 11, '▲'),
     ShiftRight: new Key('key special shift-right', 3, 12, 'Shift'),
 
-}
+    }
+
+
+const input = document.querySelector('#input');
+const board = document.createElement('div');
+const body = document.querySelector('body');
+board.classList.add('board');
+board.innerHTML = `<div class="row"></div><div class="row"></div><div class="row"></div><div class="row"></div>`;
+body.append(board);
+const rows = document.querySelectorAll('.row');
+
 
 Object.keys(keys).forEach(index => {
     const keyCreated = document.createElement('div');
