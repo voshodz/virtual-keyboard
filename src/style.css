@@ -38,6 +38,11 @@
     width: 50px;
 }
 
+.space {
+    width: 350px;
+}
+
+
 #input {
     resize: none;
     width: 600px;
@@ -62,4 +67,8 @@
     transition: background-color  0.4s ease;
     background-color: rgb(247, 176, 11);
     
+}
+
+.hidden {
+    display: none;
 }
