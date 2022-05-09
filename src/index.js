@@ -25,9 +25,9 @@ class Key {
     Digit0: new Key('key', '0', 10, '0', ')', '0', ')'),
     Minus: new Key('key', '0', 11, '-', '_', '-', '_'),
     Equal: new Key('key', '0', 12, '=', '+', '=', '+'),
-    Backspace: new Key('key special', '0', 13, 'backspace', 'backspace', 'backspace', 'backspace'),
+    Backspace: new Key('key special backspace', '0', 13, 'backspace', 'backspace', 'backspace', 'backspace'),
     //row №2
-    Tab: new Key('key special part', '1', '0', 'tab', 'tab', 'tab', 'tab'),
+    Tab: new Key('key special tab', '1', '0', 'tab', 'tab', 'tab', 'tab'),
     KeyQ: new Key('key', '1', 1, 'q', 'Q', 'Q', 'q'),
     KeyW: new Key('key', '1', 2, 'w', 'W', 'W', 'w'),
     KeyE: new Key('key', '1', 3, 'e', 'E', 'E', 'e'),
@@ -41,7 +41,7 @@ class Key {
     BracketLeft: new Key('key', '1', '11', '[', '{', '[', '{'),
     BracketRight: new Key('key', '1', '12', ']', '}', ']', '}'),
     Backslash: new Key('key', '1', '13', "\\", '|', "\\", '|'),
-    Delete: new Key('key special part delete', '1', '14', 'Del', 'Del', 'Del', 'Del'),
+    Delete: new Key('key special delete', '1', '14', 'Del', 'Del', 'Del', 'Del'),
     //row №3
     CapsLock: new Key('key special capslock', 2, 0, 'Caps lock', 'Caps lock', 'Caps lock', 'Caps lock'),
     KeyA: new Key('key', 2, 1, 'a', 'A', 'A', 'a'), 
@@ -68,26 +68,37 @@ class Key {
     Comma: new Key('key', 3, 8, ',', '<', ',', '<'),
     Period: new Key('key', 3, 9, '.', '>', '.', '>'),
     Slash: new Key('key', 3, 10, '/', '?', '/', '?'),
-    ArrowUp: new Key('key', 3, 11, '▲', '▲', '▲', '▲'),
+    ArrowUp: new Key('key black', 3, 11, '▲', '▲', '▲', '▲'),
     ShiftRight: new Key('key special shift-right', 3, 12, 'Shift', 'Shift', 'Shift', 'Shift'),
-    ControlLeft: new Key('key special part', 4, 0, 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl' ),
-    MetaLeft: new Key('key special part', 4, 1, 'Win', 'Win', 'Win', 'Win' ),
-    AltLeft: new Key('key special part', 4, 2, 'Alt', 'Alt', 'Alt', 'Alt' ),
+    ControlLeft: new Key('key black', 4, 0, 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl' ),
+    MetaLeft: new Key('key black', 4, 1, 'Win', 'Win', 'Win', 'Win' ),
+    AltLeft: new Key('key black', 4, 2, 'Alt', 'Alt', 'Alt', 'Alt' ),
     Space: new Key('key space', 4, 3, '', '', '', '' ),
-    AltRight: new Key('key special part', 4, 4, 'Alt', 'Alt', 'Alt', 'Alt' ),
-    ArrowLeft: new Key('key', 4, 5,  '◀', '◀', '◀', '◀'),
-    ArrowDown: new Key('key', 4, 6, '▼', '▼', '▼', '▼'),
-    ArrowRight: new Key('key', 4, 7, '▶', '▶', '▶', '▶'),
-    ControlRight: new Key('key special part', 4, 8, 'ctrl', 'ctrl', 'ctrl', 'ctrl'),
+    AltRight: new Key('key black', 4, 4, 'Alt', 'Alt', 'Alt', 'Alt' ),
+    ArrowLeft: new Key('key black', 4, 5,  '◀', '◀', '◀', '◀'),
+    ArrowDown: new Key('key black', 4, 6, '▼', '▼', '▼', '▼'),
+    ArrowRight: new Key('key black', 4, 7, '▶', '▶', '▶', '▶'),
+    ControlRight: new Key('key black', 4, 8, 'ctrl', 'ctrl', 'ctrl', 'ctrl'),
     }
 
 
-const input = document.querySelector('#input');
-const board = document.createElement('div');
+
 const body = document.querySelector('body');
+//const input = document.querySelector('#input');
+const board = document.createElement('div');
+const wrapper = document.createElement('div');
+wrapper.classList.add('wrapper');
+
+const input = document.createElement('textarea');
+input.name = 'text';
+input.id = 'input';
+wrapper.append(input);
+
+
 let flagCapsLock = false;
 board.classList.add('board');
 board.innerHTML = `<div class="row"></div><div class="row"></div><div class="row"></div><div class="row"></div><div class="row">`;
+body.append(wrapper);
 body.append(board);
 const rows = document.querySelectorAll('.row');
 
@@ -128,14 +139,12 @@ const findNotHiddenClass = (key) => {
     for (let i = 0; i < key.children.length; i++) {
         if(!key.children[i].className.match(/hidden/)) {
             notHiddenClassName = key.children[i].className;
-            //console.log(notHiddenClassName);
             return notHiddenClassName;
         }   
     }
 }
 
 document.addEventListener('keydown', (e) => {
-    console.log(e.code);
     let notHiddenClassName;
 
     const row = document.querySelectorAll('.row')[keys[e.code].row];
@@ -169,9 +178,22 @@ document.addEventListener('keydown', (e) => {
     }
     if(e.code === 'Enter') {
         e.preventDefault();
+        input.innerHTML += '\n';
         return;
     }
-    
+    if( (e.code === 'MetaLeft') ) {
+        return;
+    }
+    if( (e.code === 'AltLeft') || (e.code === 'AltRight')  
+        || (e.code === 'ControlLeft') || (e.code === 'ControlRight')
+    ) {
+        e.preventDefault();
+        return;
+    }
+    if( ( e.code === 'Space') ) {
+        input.innerHTML += ' ';
+        return;
+    }
 
     if((e.code === 'ShiftLeft') ||  (e.code === 'ShiftRight')) {
         e.preventDefault();
@@ -197,7 +219,6 @@ document.addEventListener('keydown', (e) => {
         return;
     }
 
-    //console.log(notHiddenClassName);
     input.innerHTML += keys[e.code][notHiddenClassName];
 });
 
