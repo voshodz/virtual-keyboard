@@ -1,3 +1,8 @@
+if(localStorage['lang'] === undefined) {
+    localStorage.setItem('lang', 'ru')
+}
+
+
 class Key {
     constructor(classKey, row, keyNumber, caseDown, caseUp, caps, shiftCaps) {
       this.classKey = classKey;
@@ -150,7 +155,7 @@ class Key {
     ArrowRight: new Key('key black', 4, 7, '▶', '▶', '▶', '▶'),
     ControlRight: new Key('key black', 4, 8, 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl'),
     } 
- let LANGUAGE = 'ru';
+ let LANGUAGE = localStorage['lang'];
  let flagCapsLock = false;
 
 
@@ -214,7 +219,7 @@ const initializeBoard = (keys) => {
         rows[keys[index].row].append(keyCreated);
     });
 }
-initializeBoard(keysru);
+(LANGUAGE === 'ru') ? (initializeBoard(keysru)) : (initializeBoard(keys))
 
 const findNotHiddenClass = (key) => {
     let notHiddenClassName = "";
@@ -237,6 +242,7 @@ document.addEventListener('keydown', (e) => {
     }
     if(e.ctrlKey && e.altKey) {
         (LANGUAGE === 'ru') ? (LANGUAGE = 'eng') : (LANGUAGE = 'ru');
+        localStorage.setItem('lang', LANGUAGE);
         changeLanguage(LANGUAGE);
         return;
     }
@@ -358,8 +364,6 @@ document.addEventListener('keyup', (e) => {
 });
 
 document.addEventListener('click', (e) => {
-    //input.focus();
-    //input.setSelectionRange(input.value.length,input.value.length);
     let value = "";
     const targerName = e.target.className;
     if(targerName.match(/key/)) {
@@ -452,7 +456,5 @@ document.addEventListener('click', (e) => {
 
         input.innerHTML += value;
         return;
-        
-
     });
 
