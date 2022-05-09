@@ -29,6 +29,9 @@
     align-items: center;
     border-radius: 5px;
 }
+.key:hover {
+    cursor: pointer;
+}
 
 .special {
     width: 100px;
