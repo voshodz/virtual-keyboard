@@ -78,7 +78,7 @@ class Key {
     ArrowLeft: new Key('key black', 4, 5,  '◀', '◀', '◀', '◀'),
     ArrowDown: new Key('key black', 4, 6, '▼', '▼', '▼', '▼'),
     ArrowRight: new Key('key black', 4, 7, '▶', '▶', '▶', '▶'),
-    ControlRight: new Key('key black', 4, 8, 'ctrl', 'ctrl', 'ctrl', 'ctrl'),
+    ControlRight: new Key('key black', 4, 8, 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl'),
     }
  const keysru = {
     //row №1
@@ -148,7 +148,7 @@ class Key {
     ArrowLeft: new Key('key black', 4, 5,  '◀', '◀', '◀', '◀'),
     ArrowDown: new Key('key black', 4, 6, '▼', '▼', '▼', '▼'),
     ArrowRight: new Key('key black', 4, 7, '▶', '▶', '▶', '▶'),
-    ControlRight: new Key('key black', 4, 8, 'ctrl', 'ctrl', 'ctrl', 'ctrl'),
+    ControlRight: new Key('key black', 4, 8, 'Ctrl', 'Ctrl', 'Ctrl', 'Ctrl'),
     } 
  let LANGUAGE = 'ru';
  let flagCapsLock = false;
@@ -156,8 +156,15 @@ class Key {
 
 
 const body = document.querySelector('body');
+const Title = document.createElement('h1');
 const board = document.createElement('div');
 const wrapper = document.createElement('div');
+Title.innerHTML += "Virtual Keyboard";
+body.append(Title);
+const InfoText = document.createElement('h2');
+InfoText.innerHTML += `Windows OS
+Switch language : ctrl + alt`;
+body.append(InfoText);
 wrapper.classList.add('wrapper');
 body.append(wrapper);
 
@@ -225,6 +232,9 @@ const changeLanguage = (language) => {
 }
 
 document.addEventListener('keydown', (e) => {
+    if(keys[e.code] === undefined) {
+        return;
+    }
     if(e.ctrlKey && e.altKey) {
         (LANGUAGE === 'ru') ? (LANGUAGE = 'eng') : (LANGUAGE = 'ru');
         changeLanguage(LANGUAGE);
@@ -312,6 +322,9 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keyup', (e) => {
+    if(keys[e.code] === undefined) {
+        return;
+    }
     const row = document.querySelectorAll('.row')[keys[e.code].row];
     const key = row.querySelectorAll('.key')[keys[e.code].keyNumber];
     if(e.code === 'CapsLock') {
@@ -347,61 +360,99 @@ document.addEventListener('keyup', (e) => {
 document.addEventListener('click', (e) => {
     //input.focus();
     //input.setSelectionRange(input.value.length,input.value.length);
+    let value = "";
     const targerName = e.target.className;
     if(targerName.match(/key/)) {
         const classOfValue = findNotHiddenClass(e.target);
-        let value = "";
+        
         for (let i = 0; i < e.target.children.length; i++) {
             if(e.target.children[i].className === classOfValue) {
                 value = e.target.children[i].innerHTML;
             }
-            //console.log(e.target.children[i]);
         }
+    } 
+    else if( (targerName === 'caseDown') || targerName === 'caseUp' || targerName === 'caps'
+    || (targerName === 'shiftCaps') 
+        ) { value = e.target.innerHTML; }
+
         if( value === 'tab') {
             input.innerHTML += '    ';
             return;
         }
+
         if( value === 'backspace' ) {
             input.innerHTML = input.innerHTML.slice(0, input.innerHTML.length - 1);
             return;
         }
-        if( value === 'Alt' || value === 'Shift' || value === 'Win' || value === 'Del'
-            || (value === 'Caps lock')
-        ) {
+
+        if( value === 'Alt' || value === 'Win' || value === 'Del' || value == 'Ctrl') {
             return;
         }
         if( value === '') {
-            input.innerHTML += ' ';
+            if( (e.target.className === 'key space') || (e.target.className === 'key space pressed') ) {
+                input.innerHTML += ' ';
+                return;
+            }
             return;
         }
+        if(value === 'Caps lock') {
+            const capsLock = document.querySelector('.capslock');
+            capsLock.classList.toggle('pressed');
+            (flagCapsLock == true) ? (flagCapsLock = false) : (flagCapsLock = true)
+            const caseDowns = document.querySelectorAll('.caseDown');
+            const caps = document.querySelectorAll('.caps');
+            caseDowns.forEach(e => {
+                e.classList.toggle('hidden');
+            });
+            caps.forEach(e => {
+                e.classList.toggle('hidden');
+            });
+            return;
+        }
+        if(value === 'Shift') {
+            let flagShift = false;
+            const shiftKey = document.querySelector('.shift-left');
+            shiftKey.classList.toggle('pressed');
+            if( shiftKey.className.match(/pressed/) ) {
+                flagShift = true;
+            }else {
+                flagShift = false;
+            }
+            const caseDowns = document.querySelectorAll('.caseDown');
+            const caseUps = document.querySelectorAll('.caseUp');
+            const caps = document.querySelectorAll('.caps');
+            const shiftCaps = document.querySelectorAll('.shiftCaps')
+            if(flagCapsLock) {
+                caps.forEach(e => {
+                    e.classList.add('hidden');
+                });
+                shiftCaps.forEach(e => {
+                    e.classList.remove('hidden');
+                });
+                return;
+            }
+            if(flagShift) {
+                caseDowns.forEach(e => {
+                    e.classList.add('hidden');
+                });
+                caseUps.forEach(e => {
+                    e.classList.remove('hidden');
+                });
+            } else {
+                caseDowns.forEach(e => {
+                    e.classList.remove('hidden');
+                });
+                caseUps.forEach(e => {
+                    e.classList.add('hidden');
+                });
+            }
+            
+            return;
+        }
+
         input.innerHTML += value;
         return;
-    }
-    if( (targerName === 'caseDown') || targerName === 'caseUp' || targerName === 'caps'
-        || (targerName === 'shiftCaps') 
-    ) {
-        const value = e.target.innerHTML;
-        if( value === 'tab') {
-            input.innerHTML += '    ';
-            return;
-        }
-        if( value === 'backspace' ) {
-            input.innerHTML = input.innerHTML.slice(0, input.innerHTML.length - 1);
-            return;
-        }
-        if( value === 'Alt' || value === 'Shift' || value === 'Win' || value === 'Del'
-            || (value === 'Caps lock')
-        ) {
-            return;
-        }
-        if( value === '') {
-            input.innerHTML += ' ';
-            return;
-        }
+        
 
+    });
 
-        input.innerHTML += value;
-        return;
-    }
-
-});
